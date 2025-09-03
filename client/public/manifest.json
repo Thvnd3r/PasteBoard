@@ -1,0 +1,8 @@
+{
+  "short_name": "PasteBoard",
+  "name": "PasteBoard",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#00000",
+  "background_color": "#ffffff"
+}

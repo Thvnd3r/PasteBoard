@@ -1,0 +1,159 @@
+/* 1990s-inspired dark mode styling */
+body {
+  background-color: #1a1a1a;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.App-header {
+  text-align: center;
+  border-bottom: 2px solid #00ff00;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.App-header h1 {
+  color: #00ff00;
+  text-shadow: 2px 2px 4px #000000;
+  font-size: 2.5em;
+  letter-spacing: 3px;
+}
+
+.App-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-section {
+  background-color: #2a2a2a;
+  border: 1px solid #00ff00;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.input-section h2 {
+ color: #00ff00;
+  margin-top: 0;
+  border-bottom: 1px solid #00ff00;
+  padding-bottom: 5px;
+}
+
+.content-input textarea {
+  width: 100%;
+  background-color: #1a1a1a;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  resize: vertical;
+}
+
+.content-input textarea:focus {
+  outline: none;
+  border-color: #ffff00;
+}
+
+button {
+  background-color: #0000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 8px 16px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #003300;
+}
+
+button:disabled {
+  background-color: #333333;
+  color: #666666;
+  border-color: #666666;
+  cursor: not-allowed;
+}
+
+.file-upload input[type="file"] {
+ background-color: #1a1a1a;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 5px;
+}
+
+.content-section {
+  background-color: #2a2a2a;
+  border: 1px solid #00ff00;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.content-section h2 {
+  color: #00ff00;
+  margin-top: 0;
+  border-bottom: 1px solid #00ff00;
+  padding-bottom: 5px;
+}
+
+.content-display ul {
+  list-style-type: none;
+ padding: 0;
+}
+
+.content-item {
+  background-color: #1a1a1a;
+  border: 1px solid #00ff00;
+ padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 3px;
+}
+
+.content-item.link {
+  border-color: #0066ff;
+}
+
+.content-item.file {
+  border-color: #ff6600;
+}
+
+.content-item a {
+  color: #00ffff;
+  text-decoration: none;
+}
+
+.content-item a:hover {
+  text-decoration: underline;
+}
+
+.timestamp {
+  display: block;
+  font-size: 0.8em;
+  color: #666666;
+  margin-top: 5px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ff00;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00cc00;
+}
