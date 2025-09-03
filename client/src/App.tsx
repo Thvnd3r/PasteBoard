@@ -9,6 +9,7 @@ const socket = io();
 
 function App() {
   const [content, setContent] = useState<any[]>([]);
+  const [activeView, setActiveView] = useState('new'); // new, text, files, view-all
   
   useEffect(() => {
     // Fetch initial content
@@ -28,19 +29,69 @@ function App() {
     };
   }, []);
   
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'text':
+        return <ContentDisplay content={content.filter(item => item.type === 'text' || item.type === 'link')} />;
+      case 'files':
+        return <ContentDisplay content={content.filter(item => item.type === 'file')} />;
+      case 'view-all':
+        return <ContentDisplay content={content} />;
+      case 'new':
+      default:
+        return (
+          <div className="new-page">
+            <div className="input-section">
+              <h2>Text/Links</h2>
+              <ContentInput socket={socket} />
+            </div>
+            <div className="file-upload">
+              <h2>Files</h2>
+              <FileUpload socket={socket} />
+            </div>
+          </div>
+        );
+    }
+  };
+  
   return (
     <div className="App">
       <header className="App-header">
-        <h1>PasteBoard</h1>
+        <div className="header-content">
+          <h1>PasteBoard</h1>
+          <p className="tagline">Share text, images and links on your local network</p>
+        </div>
       </header>
+      
+      <nav className="sidebar">
+        <button 
+          className={activeView === 'new' ? 'active' : ''} 
+          onClick={() => setActiveView('new')}
+        >
+          New
+        </button>
+        <button 
+          className={activeView === 'text' ? 'active' : ''} 
+          onClick={() => setActiveView('text')}
+        >
+          Text/Links
+        </button>
+        <button 
+          className={activeView === 'files' ? 'active' : ''} 
+          onClick={() => setActiveView('files')}
+        >
+          Files
+        </button>
+        <button 
+          className={activeView === 'view-all' ? 'active' : ''} 
+          onClick={() => setActiveView('view-all')}
+        >
+          View All
+        </button>
+      </nav>
+      
       <main className="App-main">
-        <div className="input-section">
-          <ContentInput socket={socket} />
-          <FileUpload socket={socket} />
-        </div>
-        <div className="content-section">
-          <ContentDisplay content={content} />
-        </div>
+        {renderActiveView()}
       </main>
     </div>
   );

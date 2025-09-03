@@ -6,6 +6,7 @@ interface ContentInputProps {
 
 const ContentInput: React.FC<ContentInputProps> = ({ socket }) => {
   const [inputText, setInputText] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,9 @@ const ContentInput: React.FC<ContentInputProps> = ({ socket }) => {
       
       if (response.ok) {
         setInputText('');
+        setSuccessMessage('Text successfully pasted!');
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(''), 3000);
       } else {
         console.error('Failed to submit content');
       }
@@ -32,19 +36,17 @@ const ContentInput: React.FC<ContentInputProps> = ({ socket }) => {
   };
   
   return (
-    <div className="content-input">
-      <h2>Paste Text</h2>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Paste your text or URL here..."
-          rows={4}
-          cols={50}
-        />
-        <br />
-        <button type="submit">Paste</button>
-      </form>
+    <div className="content-input-simple">
+      <textarea
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)}
+        placeholder="Paste your text or URL here..."
+        rows={2}
+        cols={25}
+      />
+      <br />
+      <button onClick={handleSubmit}>Paste</button>
+      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
   );
 };
