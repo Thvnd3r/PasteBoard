@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
-import { getAllContent, addContent } from '../database';
+import { getAllContent, addContent, deleteContent, deleteAllContent } from '../database';
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -46,7 +46,7 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
     }
   });
   
-  // Upload file
+ // Upload file
   router.post('/file', upload.single('file'), async (req: Request, res: Response) => {
     try {
       if (!req.file) {
@@ -70,6 +70,35 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       res.json({ id, type: 'file', content: originalName, filename });
     } catch (error) {
       res.status(500).json({ error: 'Failed to upload file' });
+    }
+  });
+  
+  // Delete content by ID
+ router.delete('/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const result = await deleteContent(parseInt(id));
+      
+      // Emit to all connected clients
+      io.emit('contentDeleted', { id: parseInt(id) });
+      
+      res.json({ success: true, deleted: result });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to delete content' });
+    }
+  });
+  
+  // Delete all content
+  router.delete('/', async (req: Request, res: Response) => {
+    try {
+      const result = await deleteAllContent();
+      
+      // Emit to all connected clients
+      io.emit('allContentDeleted');
+      
+      res.json({ success: true, deleted: result });
+    } catch (error) {
+      res.status(50).json({ error: 'Failed to delete all content' });
     }
   });
   

@@ -33,3 +33,53 @@ export const addContent = async (type: string, content: string, filename?: strin
   const result = stmt.run(type, content, filename || null);
   return result.lastInsertRowid;
 };
+
+// Delete content by ID
+export const deleteContent = async (id: number) => {
+  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const stmt = db.prepare('SELECT filename FROM content WHERE id = ?');
+  const result: any = stmt.get(id);
+  
+  // If it's a file, delete the actual file from the filesystem
+  if (result && result.filename) {
+    const filePath = path.join(__dirname, '../uploads', result.filename);
+    try {
+      if (require('fs').existsSync(filePath)) {
+        require('fs').unlinkSync(filePath);
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  }
+  
+  // Delete the database record
+  const deleteStmt = db.prepare('DELETE FROM content WHERE id = ?');
+  return deleteStmt.run(id);
+};
+
+// Delete all content
+export const deleteAllContent = async () => {
+  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  
+  // Get all file items to delete their files from the filesystem
+  const stmt = db.prepare('SELECT filename FROM content WHERE filename IS NOT NULL');
+  const files: any[] = stmt.all();
+  
+  // Delete all files from the filesystem
+  files.forEach((file: any) => {
+    if (file.filename) {
+      const filePath = path.join(__dirname, '../uploads', file.filename);
+      try {
+        if (require('fs').existsSync(filePath)) {
+          require('fs').unlinkSync(filePath);
+        }
+      } catch (error) {
+        console.error('Error deleting file:', error);
+      }
+    }
+  });
+  
+  // Delete all database records
+  const deleteStmt = db.prepare('DELETE FROM content');
+  return deleteStmt.run();
+};

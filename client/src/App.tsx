@@ -23,20 +23,84 @@ function App() {
       setContent(prevContent => [newContent, ...prevContent]);
     });
     
+    // Listen for deleted content
+    socket.on('contentDeleted', (deletedContent) => {
+      setContent(prevContent => prevContent.filter(item => item.id !== deletedContent.id));
+    });
+    
+    // Listen for all content deleted
+    socket.on('allContentDeleted', () => {
+      setContent([]);
+    });
+    
     // Clean up socket connection
     return () => {
       socket.off('contentAdded');
+      socket.off('contentDeleted');
+      socket.off('allContentDeleted');
     };
   }, []);
+  
+  const deleteContentItem = async (id: number) => {
+    try {
+      const response = await fetch(`/api/content/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete content');
+      }
+      
+      // Update local state
+      setContent(prevContent => prevContent.filter(item => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting content:', error);
+    }
+  };
+  
+  const deleteAllContent = async () => {
+    try {
+      const response = await fetch('/api/content', {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete all content');
+      }
+      
+      // Update local state
+      setContent([]);
+    } catch (error) {
+      console.error('Error deleting all content:', error);
+    }
+  };
   
   const renderActiveView = () => {
     switch (activeView) {
       case 'text':
-        return <ContentDisplay content={content.filter(item => item.type === 'text' || item.type === 'link')} />;
+        return (
+          <ContentDisplay 
+            content={content.filter(item => item.type === 'text' || item.type === 'link')} 
+            onDeleteItem={deleteContentItem}
+            onDeleteAll={deleteAllContent}
+          />
+        );
       case 'files':
-        return <ContentDisplay content={content.filter(item => item.type === 'file')} />;
+        return (
+          <ContentDisplay 
+            content={content.filter(item => item.type === 'file')} 
+            onDeleteItem={deleteContentItem}
+            onDeleteAll={deleteAllContent}
+          />
+        );
       case 'view-all':
-        return <ContentDisplay content={content} />;
+        return (
+          <ContentDisplay 
+            content={content} 
+            onDeleteItem={deleteContentItem}
+            onDeleteAll={deleteAllContent}
+          />
+        );
       case 'new':
       default:
         return (

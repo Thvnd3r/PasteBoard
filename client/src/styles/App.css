@@ -325,6 +325,7 @@ button:disabled {
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 3px;
+  position: relative;
 }
 
 .content-item.link {
@@ -351,6 +352,98 @@ button:disabled {
   color: #a89f91;
   font-style: italic;
   margin-top: 8px;
+}
+
+/* Delete button styling */
+.delete-button {
+  background-color: #c47e5a;
+  color: #181a1b;
+  border: 1px solid #c47e5a;
+  padding: 5px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 3px;
+  font-size: 0.8em;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.delete-button:hover {
+  background-color: #d48e6a;
+  border-color: #d48e6a;
+}
+
+/* Delete all button styling */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.delete-all-button {
+  background-color: #c47e5a;
+  color: #181a1b;
+  border: 1px solid #c47e5a;
+  padding: 8px 15px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.delete-all-button:hover {
+  background-color: #d48e6a;
+  border-color: #d48e6a;
+}
+
+.confirm-delete-all {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.confirm-delete-item {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #2a2d2f;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #a89f91;
+}
+
+.confirm-button, .cancel-button {
+  padding: 5px 10px;
+  font-size: 0.9em;
+}
+
+.confirm-button {
+  background-color: #8a9b6c;
+  border-color: #8a9b6c;
+  color: #181a1b;
+}
+
+.confirm-button:hover {
+  background-color: #9aac7c;
+  border-color: #9aac7c;
+}
+
+.cancel-button {
+  background-color: #a89f91;
+  border-color: #a89f91;
+  color: #181a1b;
+}
+
+.cancel-button:hover {
+  background-color: #b8afaf;
+  border-color: #b8afaf;
 }
 
 /* Scrollbar styling */
