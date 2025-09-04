@@ -388,12 +388,6 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
             </div>
             <div className="modal-footer">
               <button 
-                className="view-in-new-tab-button"
-                onClick={() => window.open(modalContent.url, '_blank')}
-              >
-                Open in New Tab
-              </button>
-              <button 
                 className="download-button"
                 onClick={() => {
                   const link = document.createElement('a');
