@@ -320,30 +320,72 @@ button:disabled {
 }
 
 .content-item {
-  background-color: #181a1b;
-  border: 1px solid #a89f91;
+  display: flex;
+  align-items: flex-start;
   padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 3px;
+  border: 1px solid #a89f91;
+  border-radius: 5px;
+  gap: 10px;
   position: relative;
+  margin-bottom: 10px;
+  background-color: #2a2d2f;
+}
+
+.tag {
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+.tag.Text {
+  background-color: #d9985f;
+}
+
+.tag.Link {
+  background-color: #4da6ff;
+}
+
+.tag.File {
+  background-color: #a89f91;
+}
+
+.tag.Image {
+  background-color: #8a9b6c;
+}
+
+.content-item:last-child {
+  border-bottom: none;
+}
+
+.content-item.text {
+  background-color: #2a2d2f;
 }
 
 .content-item.link {
-  border-color: #8a9b6c;
+  background-color: #2a2d2f;
 }
 
 .content-item.file {
-  border-color: #c47e5a;
+  background-color: #2a2d2f;
 }
 
 .content-item a {
-  color: #d9985f;
-  text-decoration: none;
-  font-weight: bold;
+  color: #4da6ff;
 }
 
 .content-item a:hover {
   text-decoration: underline;
+}
+
+.content-item .text-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: block;
+  margin-right: 10px;
 }
 
 .timestamp {
@@ -352,6 +394,28 @@ button:disabled {
   color: #a89f91;
   font-style: italic;
   margin-top: 8px;
+}
+
+/* Copy button styling */
+.copy-button {
+  background-color: #181a1b;
+  color: #e0d6c5;
+  border: 1px solid #a89f91;
+  padding: 5px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 3px;
+  font-size: 0.8em;
+  position: absolute;
+  top: 10px;
+  right: 70px; /* Adjusted to accommodate both copy and delete buttons */
+}
+
+.copy-button:hover {
+  background-color: #2a2d2f;
+  border-color: #d9985f;
+  color: #d9985f;
 }
 
 /* Delete button styling */
@@ -365,7 +429,7 @@ button:disabled {
   font-weight: bold;
   border-radius: 3px;
   font-size: 0.8em;
-  position: absolute;
+ position: absolute;
   top: 10px;
   right: 10px;
 }

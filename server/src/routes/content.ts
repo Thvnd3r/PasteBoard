@@ -34,13 +34,15 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
     try {
       const { content } = req.body;
       const type = detectContentType(content);
+      // Add tag based on type
+      const tag = type === 'link' ? 'Link' : 'Text';
       
-      const id = await addContent(type, content);
+      const id = await addContent(type, content, undefined, tag);
       
       // Emit to all connected clients
-      io.emit('contentAdded', { id, type, content, timestamp: new Date() });
+      io.emit('contentAdded', { id, type, content, tag, timestamp: new Date() });
       
-      res.json({ id, type, content });
+      res.json({ id, type, content, tag });
     } catch (error) {
       res.status(500).json({ error: 'Failed to add content' });
     }
@@ -56,7 +58,12 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       const filename = req.file.filename;
       const originalName = req.file.originalname;
       
-      const id = await addContent('file', originalName, filename);
+      // Determine if the file is an image based on MIME type
+      const isImage = req.file.mimetype && req.file.mimetype.startsWith('image/');
+      // Add appropriate tag for file uploads
+      const tag = isImage ? 'Image' : 'File';
+      
+      const id = await addContent('file', originalName, filename, tag);
       
       // Emit to all connected clients
       io.emit('contentAdded', { 
@@ -64,10 +71,11 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
         type: 'file', 
         content: originalName, 
         filename,
+        tag,
         timestamp: new Date() 
       });
       
-      res.json({ id, type: 'file', content: originalName, filename });
+      res.json({ id, type: 'file', content: originalName, filename, tag });
     } catch (error) {
       res.status(500).json({ error: 'Failed to upload file' });
     }

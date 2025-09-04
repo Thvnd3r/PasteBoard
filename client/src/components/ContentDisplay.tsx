@@ -5,6 +5,7 @@ interface ContentItem {
   type: string;
   content: string;
   filename?: string;
+  tag?: string;
   timestamp?: string;
 }
 
@@ -23,6 +24,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
 }) => {
   const [showConfirmDeleteAll, setShowConfirmDeleteAll] = useState(false);
   const [showConfirmDeleteItem, setShowConfirmDeleteItem] = useState<number | null>(null);
+  const [copiedItemId, setCopiedItemId] = useState<number | null>(null);
   
   const renderContent = (item: ContentItem) => {
     if (item.type === 'link') {
@@ -42,8 +44,19 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
         </div>
       );
     } else {
-      return <span>{item.content}</span>;
+      return <span className="text-content">{item.content}</span>;
     }
+  };
+  
+  const copyToClipboard = (text: string, itemId: number) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setCopiedItemId(itemId);
+        setTimeout(() => setCopiedItemId(null), 2000); // Reset after 2 seconds
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
   };
   
   const handleDeleteAll = () => {
@@ -87,10 +100,20 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
         <ul>
           {content.map((item) => (
             <li key={item.id} className={`content-item ${item.type}`}>
+              {item.tag && <span className={`tag ${item.tag}`}>{item.tag}</span>}
               {renderContent(item)}
               <span className="timestamp">
                 {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}
               </span>
+              {(item.type === 'text' || item.type === 'link') && (
+                <button 
+                  className="copy-button" 
+                  onClick={() => copyToClipboard(item.content, item.id)}
+                  aria-label="Copy to clipboard"
+                >
+                  {copiedItemId === item.id ? 'Copied!' : 'Copy'}
+                </button>
+              )}
               {onDeleteItem && (
                 showConfirmDeleteItem === item.id ? (
                   <div className="confirm-delete-item">
