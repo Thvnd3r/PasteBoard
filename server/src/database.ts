@@ -40,12 +40,25 @@ export const getAllContent = async () => {
   return stmt.all();
 };
 
+interface ContentRecord {
+  id: number;
+  type: string;
+  content: string;
+  filename?: string;
+  timestamp: string;
+  tag?: string;
+  language?: string;
+}
+
 // Add new content with tag and language
-export const addContent = async (type: string, content: string, filename?: string, tag?: string, language?: string) => {
+export const addContent = async (type: string, content: string, filename?: string, tag?: string, language?: string): Promise<ContentRecord> => {
   const db = new Database(path.join(__dirname, '../pasteboard.db'));
   const stmt = db.prepare('INSERT INTO content (type, content, filename, tag, language) VALUES (?, ?, ?, ?, ?)');
   const result = stmt.run(type, content, filename || null, tag || null, language || null);
-  return result.lastInsertRowid;
+  
+  // Get the inserted record including the auto-generated timestamp
+  const selectStmt = db.prepare('SELECT * FROM content WHERE id = ?');
+  return selectStmt.get(result.lastInsertRowid) as ContentRecord;
 };
 
 // Delete content by ID

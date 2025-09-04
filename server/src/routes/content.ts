@@ -44,10 +44,11 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
         language = detectLanguage(content);
       }
       
-      const id = await addContent(type, content, undefined, tag, language || undefined);
+      const record = await addContent(type, content, undefined, tag, language || undefined);
+      const { id, timestamp } = record;
       
-      // Emit to all connected clients
-      io.emit('contentAdded', { id, type, content, tag, language, timestamp: new Date() });
+      // Emit to all connected clients with the actual database timestamp
+      io.emit('contentAdded', { id, type, content, tag, language, timestamp });
       
       res.json({ id, type, content, tag, language });
     } catch (error) {
@@ -70,16 +71,17 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       // Add appropriate tag for file uploads
       const tag = isImage ? 'Image' : 'File';
       
-      const id = await addContent('file', originalName, filename, tag);
+      const record = await addContent('file', originalName, filename, tag);
+      const { id, timestamp } = record;
       
-      // Emit to all connected clients
+      // Emit to all connected clients with the actual database timestamp
       io.emit('contentAdded', { 
         id, 
         type: 'file', 
         content: originalName, 
         filename,
         tag,
-        timestamp: new Date() 
+        timestamp
       });
       
       res.json({ id, type: 'file', content: originalName, filename, tag });

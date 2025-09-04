@@ -211,7 +211,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
           <span>File: {item.content}</span>
           <button 
             className="view-file-button"
-            onClick={() => setModalContent({url: fileUrl, filename: item.content, type: item.tag || 'File'})}
+            onClick={() => setModalContent({url: fileUrl, filename: item.filename || item.content, type: item.tag || 'File'})}
           >
             View File
           </button>
@@ -312,7 +312,38 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
                   {item.tag && <span className={`tag ${item.tag}`}>{item.tag}</span>}
                   <span className="entry-title">{generateTitle(item)}</span>
                   <span className="timestamp">
-                    {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}
+                    {item.timestamp ? (() => {
+                      try {
+                        // Handle SQLite datetime format "YYYY-MM-DD HH:MM:SS"
+                        // Parse as UTC time and convert to local time
+                        const dateParts = item.timestamp.split(' ');
+                        if (dateParts.length === 2) {
+                          const [datePart, timePart] = dateParts;
+                          const [year, month, day] = datePart.split('-').map(Number);
+                          const [hour, minute, second] = timePart.split(':').map(Number);
+                          
+                          // Create date in UTC timezone (months are 0-indexed in JS)
+                          const date = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+                          
+                          // Check if the date is valid
+                          if (!isNaN(date.getTime())) {
+                            return date.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'}) + ' ' + date.toLocaleTimeString(undefined, {hour: 'numeric', minute:'2-digit'});
+                          }
+                        }
+                        
+                        // Fallback to default parsing as UTC
+                        const fallbackDate = new Date(item.timestamp + 'Z');
+                        if (!isNaN(fallbackDate.getTime())) {
+                          return fallbackDate.toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'}) + ' ' + fallbackDate.toLocaleTimeString(undefined, {hour: 'numeric', minute:'2-digit'});
+                        }
+                        
+                        // If all parsing fails, return the original timestamp
+                        return item.timestamp;
+                      } catch (error) {
+                        // If any error occurs, return the original timestamp
+                        return item.timestamp;
+                      }
+                    })() : ''}
                   </span>
                 </div>
                 <div className="entry-header-right">
