@@ -43,7 +43,7 @@ COPY --from=server-builder /app/node_modules ./node_modules
 COPY server/package*.json ./
 
 # Copy client build
-COPY --from=client-builder /app/build ./client/build
+COPY --from=client-builder /app/build /client/build
 
 # Create uploads directory
 RUN mkdir -p uploads

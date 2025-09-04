@@ -7,6 +7,9 @@ import java from 'highlight.js/lib/languages/java';
 import cpp from 'highlight.js/lib/languages/cpp';
 import css from 'highlight.js/lib/languages/css';
 import html from 'highlight.js/lib/languages/xml';
+import markdown from 'highlight.js/lib/languages/markdown';
+import json from 'highlight.js/lib/languages/json';
+import sql from 'highlight.js/lib/languages/sql';
 import 'highlight.js/styles/github-dark.css';
 
 // Register commonly used languages
@@ -17,6 +20,9 @@ hljs.registerLanguage('java', java);
 hljs.registerLanguage('cpp', cpp);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('html', html);
+hljs.registerLanguage('markdown', markdown);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('sql', sql);
 
 interface ContentItem {
   id: number;
@@ -76,6 +82,9 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   const [showConfirmDeleteItem, setShowConfirmDeleteItem] = useState<number | null>(null);
   const [copiedItemId, setCopiedItemId] = useState<number | null>(null);
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
+  const [modalContent, setModalContent] = useState<{url: string, filename: string, type: string} | null>(null);
+  const [modalPreview, setModalPreview] = useState<string | null>(null);
+  const [modalLoading, setModalLoading] = useState(false);
   
   useEffect(() => {
     // Highlight code blocks
@@ -83,6 +92,78 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
       hljs.highlightElement(block as HTMLElement);
     });
   }, [content]);
+  
+  useEffect(() => {
+    // Load preview when modal content changes
+    if (modalContent) {
+      setModalLoading(true);
+      setModalPreview(null);
+      
+      // For images, we can directly show them
+      if (modalContent.type === 'Image') {
+        setModalPreview(`<img src="${modalContent.url}" alt="${modalContent.filename}" />`);
+        setModalLoading(false);
+      } 
+      // For text files, we can try to fetch and display content
+      else if (modalContent.type === 'File' || modalContent.type === 'Text') {
+        fetch(modalContent.url)
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            }
+            throw new Error('Failed to fetch file content');
+          })
+          .then(text => {
+            // Check if it's a code file based on extension
+            const extension = modalContent.filename.split('.').pop()?.toLowerCase();
+            const codeLanguages = ['js', 'ts', 'jsx', 'tsx', 'html', 'css', 'json', 'xml', 'py', 'java', 'cpp', 'c', 'h', 'hpp', 'sql', 'md'];
+            
+            if (extension && codeLanguages.includes(extension)) {
+              // Format as code with syntax highlighting
+              const language = extension === 'js' || extension === 'jsx' ? 'javascript' :
+                              extension === 'ts' || extension === 'tsx' ? 'typescript' :
+                              extension === 'py' ? 'python' :
+                              extension === 'java' ? 'java' :
+                              extension === 'cpp' || extension === 'c' || extension === 'h' || extension === 'hpp' ? 'cpp' :
+                              extension === 'css' ? 'css' :
+                              extension === 'html' || extension === 'xml' ? 'html' :
+                              extension === 'json' ? 'json' :
+                              extension === 'sql' ? 'sql' :
+                              extension === 'md' ? 'markdown' :
+                              'plaintext';
+              
+              setModalPreview(`<pre><code class="language-${language}">${text}</code></pre>`);
+            } else {
+              // Format as plain text
+              setModalPreview(`<pre>${text}</pre>`);
+            }
+            
+            setModalLoading(false);
+          })
+          .catch(error => {
+            console.error('Error loading file preview:', error);
+            setModalLoading(false);
+          });
+      } 
+      // For other file types, just show basic info
+      else {
+        setModalLoading(false);
+      }
+    }
+  }, [modalContent]);
+  
+  useEffect(() => {
+    // Apply syntax highlighting to modal content when it changes
+    if (modalPreview) {
+      const modalBody = document.querySelector('.modal-body');
+      if (modalBody) {
+        const codeBlocks = modalBody.querySelectorAll('pre code');
+        codeBlocks.forEach((block) => {
+          hljs.highlightElement(block as HTMLElement);
+        });
+      }
+    }
+  }, [modalPreview]);
   
   const toggleExpand = (id: number) => {
     setExpandedItems(prev => ({
@@ -116,11 +197,14 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
     } else if (item.type === 'file') {
       const fileUrl = `/uploads/${item.filename}`;
       return (
-        <div>
+        <div className="file-display">
           <span>File: {item.content}</span>
-          <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+          <button 
+            className="view-file-button"
+            onClick={() => setModalContent({url: fileUrl, filename: item.content, type: item.tag || 'File'})}
+          >
             View File
-          </a>
+          </button>
         </div>
       );
     } else if (item.type === 'code') {
@@ -273,6 +357,49 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
             </li>
           ))}
         </ul>
+      )}
+      
+      {/* File Preview Modal */}
+      {modalContent && (
+        <div className="modal-overlay" onClick={() => setModalContent(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{modalContent.filename}</h3>
+              <button className="modal-close" onClick={() => setModalContent(null)}>×</button>
+            </div>
+            <div className="modal-body">
+              {modalLoading ? (
+                <p>Loading preview...</p>
+              ) : modalPreview ? (
+                <div dangerouslySetInnerHTML={{__html: modalPreview}} />
+              ) : (
+                <p>Preview not available for this file type.</p>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="view-in-new-tab-button"
+                onClick={() => window.open(modalContent.url, '_blank')}
+              >
+                Open in New Tab
+              </button>
+              <button 
+                className="download-button"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = modalContent.url;
+                  link.download = modalContent.filename;
+                  link.style.display = 'none';
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
