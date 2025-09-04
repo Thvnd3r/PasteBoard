@@ -232,14 +232,21 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
                     </button>
                   )}
                   {item.type === 'file' && (
-                    <a 
+                    <button 
                       className="download-button" 
-                      href={`/uploads/${item.filename}`}
-                      download={item.content || 'download'}
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = `/uploads/${item.filename}`;
+                        link.download = item.content || 'download';
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                      }}
                       aria-label="Download file"
                     >
                       Download
-                    </a>
+                    </button>
                   )}
                   {onDeleteItem && (
                     showConfirmDeleteItem === item.id ? (
