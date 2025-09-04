@@ -320,15 +320,40 @@ button:disabled {
 }
 
 .content-item {
-  display: flex;
-  align-items: flex-start;
   padding: 15px;
   border: 1px solid #a89f91;
   border-radius: 5px;
-  gap: 10px;
   position: relative;
   margin-bottom: 10px;
   background-color: #2a2d2f;
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.entry-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.entry-header-right {
+  display: flex;
+  gap: 5px;
+}
+
+.entry-title {
+  font-weight: bold;
+  color: #e0d6c5;
+}
+
+.entry-content {
+ margin-top: 10px;
 }
 
 .tag {
@@ -390,6 +415,16 @@ button:disabled {
   overflow-wrap: break-word;
   display: block;
   margin-right: 10px;
+  /* Limit to 10 lines by default */
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+}
+
+.content-item .text-content.expanded {
+  -webkit-line-clamp: unset;
 }
 
 .code-content {
@@ -399,6 +434,14 @@ button:disabled {
   overflow-x: auto;
  margin: 10px 0;
   border: 1px solid #333;
+  /* Limit to 10 lines by default */
+  max-height: 250px; /* Approximate height for 10 lines */
+  overflow-y: hidden;
+  position: relative;
+}
+
+.code-content.expanded {
+  max-height: none;
 }
 
 .code-content code {
@@ -426,9 +469,6 @@ button:disabled {
   font-weight: bold;
   border-radius: 3px;
   font-size: 0.8em;
-  position: absolute;
-  top: 10px;
-  right: 70px; /* Adjusted to accommodate both copy and delete buttons */
 }
 
 .copy-button:hover {
@@ -448,9 +488,6 @@ button:disabled {
   font-weight: bold;
   border-radius: 3px;
   font-size: 0.8em;
- position: absolute;
-  top: 10px;
-  right: 10px;
 }
 
 .delete-button:hover {
@@ -500,6 +537,25 @@ button:disabled {
   padding: 5px;
   border-radius: 3px;
   border: 1px solid #a89f91;
+}
+
+.expand-collapse-button {
+  background-color: #181a1b;
+  color: #e0d6c5;
+  border: 1px solid #a89f91;
+  padding: 5px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 3px;
+  font-size: 0.8em;
+  margin-top: 10px;
+}
+
+.expand-collapse-button:hover {
+  background-color: #2a2d2f;
+  border-color: #d9985f;
+  color: #d9985f;
 }
 
 .confirm-button, .cancel-button {
