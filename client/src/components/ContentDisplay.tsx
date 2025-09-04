@@ -231,6 +231,16 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
                       {copiedItemId === item.id ? 'Copied!' : 'Copy'}
                     </button>
                   )}
+                  {item.type === 'file' && (
+                    <a 
+                      className="download-button" 
+                      href={`/uploads/${item.filename}`}
+                      download={item.content || 'download'}
+                      aria-label="Download file"
+                    >
+                      Download
+                    </a>
+                  )}
                   {onDeleteItem && (
                     showConfirmDeleteItem === item.id ? (
                       <div className="confirm-delete-item">

@@ -14,7 +14,7 @@ export const startServer = async () => {
   // Middleware
   app.use(cors());
   app.use(express.json());
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.use(express.static(path.join(__dirname, '../../client/build')));
  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
   
   // Initialize database
@@ -36,7 +36,7 @@ export const startServer = async () => {
   
   // Serve React app for all other routes
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    res.sendFile(path.join(__dirname, '../../client/build/index.html'));
   });
   
   // Socket.IO connection handling

@@ -477,6 +477,25 @@ button:disabled {
   color: #d9985f;
 }
 
+/* Download button styling */
+.download-button {
+  background-color: #181a1b;
+  color: #e0d6c5;
+  border: 1px solid #a89f91;
+  padding: 5px 10px;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+.download-button:hover {
+  background-color: #2a2d2f;
+  border-color: #d9985f;
+  color: #d9985f;
+}
+
 /* Delete button styling */
 .delete-button {
   background-color: #c47e5a;
