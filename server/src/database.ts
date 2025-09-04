@@ -23,6 +23,13 @@ export const initDatabase = async (): Promise<Database.Database> => {
     // Column might already exist, which is fine
   }
   
+  // Add language column if it doesn't exist
+  try {
+    db.exec(`ALTER TABLE content ADD COLUMN language TEXT`);
+  } catch (error) {
+    // Column might already exist, which is fine
+  }
+  
   return db;
 };
 
@@ -33,11 +40,11 @@ export const getAllContent = async () => {
   return stmt.all();
 };
 
-// Add new content with tag
-export const addContent = async (type: string, content: string, filename?: string, tag?: string) => {
+// Add new content with tag and language
+export const addContent = async (type: string, content: string, filename?: string, tag?: string, language?: string) => {
   const db = new Database(path.join(__dirname, '../pasteboard.db'));
-  const stmt = db.prepare('INSERT INTO content (type, content, filename, tag) VALUES (?, ?, ?, ?)');
-  const result = stmt.run(type, content, filename || null, tag || null);
+  const stmt = db.prepare('INSERT INTO content (type, content, filename, tag, language) VALUES (?, ?, ?, ?, ?)');
+  const result = stmt.run(type, content, filename || null, tag || null, language || null);
   return result.lastInsertRowid;
 };
 

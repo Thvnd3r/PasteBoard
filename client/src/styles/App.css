@@ -392,6 +392,21 @@ button:disabled {
   margin-right: 10px;
 }
 
+.code-content {
+  background-color: #1e1e1e;
+  border-radius: 5px;
+  padding: 15px;
+  overflow-x: auto;
+ margin: 10px 0;
+  border: 1px solid #333;
+}
+
+.code-content code {
+  font-family: 'Courier New', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
 .timestamp {
   display: block;
   font-size: 0.85em;

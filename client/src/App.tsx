@@ -5,10 +5,20 @@ import ContentInput from './components/ContentInput';
 import FileUpload from './components/FileUpload';
 import './styles/App.css';
 
+interface ContentItem {
+  id: number;
+  type: string;
+  content: string;
+  filename?: string;
+  tag?: string;
+  language?: string;
+  timestamp?: string;
+}
+
 const socket = io();
 
 function App() {
-  const [content, setContent] = useState<any[]>([]);
+  const [content, setContent] = useState<ContentItem[]>([]);
   const [activeView, setActiveView] = useState('new'); // new, text, files, view-all
   
   useEffect(() => {
@@ -18,10 +28,10 @@ function App() {
       .then(data => setContent(data))
       .catch(error => console.error('Error fetching content:', error));
     
-    // Listen for new content
-    socket.on('contentAdded', (newContent) => {
-      setContent(prevContent => [newContent, ...prevContent]);
-    });
+      // Listen for new content
+      socket.on('contentAdded', (newContent) => {
+        setContent(prevContent => [newContent, ...prevContent]);
+      });
     
     // Listen for deleted content
     socket.on('contentDeleted', (deletedContent) => {

@@ -1,4 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import typescript from 'highlight.js/lib/languages/typescript';
+import python from 'highlight.js/lib/languages/python';
+import java from 'highlight.js/lib/languages/java';
+import cpp from 'highlight.js/lib/languages/cpp';
+import css from 'highlight.js/lib/languages/css';
+import html from 'highlight.js/lib/languages/xml';
+import 'highlight.js/styles/github-dark.css';
+
+// Register commonly used languages
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('java', java);
+hljs.registerLanguage('cpp', cpp);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('html', html);
 
 interface ContentItem {
   id: number;
@@ -6,6 +24,7 @@ interface ContentItem {
   content: string;
   filename?: string;
   tag?: string;
+  language?: string;
   timestamp?: string;
 }
 
@@ -26,6 +45,13 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   const [showConfirmDeleteItem, setShowConfirmDeleteItem] = useState<number | null>(null);
   const [copiedItemId, setCopiedItemId] = useState<number | null>(null);
   
+  useEffect(() => {
+    // Highlight code blocks
+    document.querySelectorAll('pre code').forEach((block) => {
+      hljs.highlightElement(block as HTMLElement);
+    });
+  }, [content]);
+  
   const renderContent = (item: ContentItem) => {
     if (item.type === 'link') {
       return (
@@ -42,6 +68,15 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
             View File
           </a>
         </div>
+      );
+    } else if (item.type === 'code') {
+      // For code snippets, we'll render them with syntax highlighting
+      return (
+        <pre className="code-content">
+          <code className={item.language ? `language-${item.language}` : ''}>
+            {item.content}
+          </code>
+        </pre>
       );
     } else {
       return <span className="text-content">{item.content}</span>;

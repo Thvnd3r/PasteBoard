@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { getAllContent, addContent, deleteContent, deleteAllContent } from '../database';
+import { detectLanguage } from '../contentParser';
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -37,12 +38,18 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       // Add tag based on type
       const tag = type === 'link' ? 'Link' : type === 'code' ? 'Code' : 'Text';
       
-      const id = await addContent(type, content, undefined, tag);
+      // Detect language for code snippets
+      let language = null;
+      if (type === 'code') {
+        language = detectLanguage(content);
+      }
+      
+      const id = await addContent(type, content, undefined, tag, language || undefined);
       
       // Emit to all connected clients
-      io.emit('contentAdded', { id, type, content, tag, timestamp: new Date() });
+      io.emit('contentAdded', { id, type, content, tag, language, timestamp: new Date() });
       
-      res.json({ id, type, content, tag });
+      res.json({ id, type, content, tag, language });
     } catch (error) {
       res.status(500).json({ error: 'Failed to add content' });
     }
