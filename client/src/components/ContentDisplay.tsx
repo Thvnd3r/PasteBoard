@@ -105,7 +105,7 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
               <span className="timestamp">
                 {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}
               </span>
-              {(item.type === 'text' || item.type === 'link') && (
+              {(item.type === 'text' || item.type === 'link' || item.type === 'code') && (
                 <button 
                   className="copy-button" 
                   onClick={() => copyToClipboard(item.content, item.id)}

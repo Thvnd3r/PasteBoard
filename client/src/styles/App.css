@@ -348,6 +348,10 @@ button:disabled {
   background-color: #4da6ff;
 }
 
+.tag.Code {
+  background-color: #9b59b6; /* Purple color for better distinction */
+}
+
 .tag.File {
   background-color: #a89f91;
 }
@@ -373,7 +377,7 @@ button:disabled {
 }
 
 .content-item a {
-  color: #4da6ff;
+  color: #4da6ff !important;
 }
 
 .content-item a:hover {

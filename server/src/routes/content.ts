@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-export const contentRoutes = (io: any, detectContentType: (content: string) => 'link' | 'text') => {
+export const contentRoutes = (io: any, detectContentType: (content: string) => 'link' | 'code' | 'text') => {
   const router = Router();
   
   // Get all content
@@ -35,7 +35,7 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       const { content } = req.body;
       const type = detectContentType(content);
       // Add tag based on type
-      const tag = type === 'link' ? 'Link' : 'Text';
+      const tag = type === 'link' ? 'Link' : type === 'code' ? 'Code' : 'Text';
       
       const id = await addContent(type, content, undefined, tag);
       

@@ -80,7 +80,7 @@ function App() {
       case 'text':
         return (
           <ContentDisplay 
-            content={content.filter(item => item.type === 'text' || item.type === 'link')} 
+            content={content.filter(item => item.type === 'text' || item.type === 'link' || item.type === 'code')} 
             onDeleteItem={deleteContentItem}
             onDeleteAll={deleteAllContent}
           />
