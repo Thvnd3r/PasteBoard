@@ -88,10 +88,15 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   
   useEffect(() => {
     // Highlight code blocks
-    document.querySelectorAll('pre code').forEach((block) => {
-      hljs.highlightElement(block as HTMLElement);
-    });
-  }, [content]);
+    // Use setTimeout to ensure DOM is fully rendered before highlighting
+    const timeoutId = setTimeout(() => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block as HTMLElement);
+      });
+    }, 0);
+    
+    return () => clearTimeout(timeoutId);
+ }, [content]);
   
   useEffect(() => {
     // Load preview when modal content changes
@@ -155,13 +160,18 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   useEffect(() => {
     // Apply syntax highlighting to modal content when it changes
     if (modalPreview) {
-      const modalBody = document.querySelector('.modal-body');
-      if (modalBody) {
-        const codeBlocks = modalBody.querySelectorAll('pre code');
-        codeBlocks.forEach((block) => {
-          hljs.highlightElement(block as HTMLElement);
-        });
-      }
+      // Use setTimeout to ensure DOM is fully rendered before highlighting
+      const timeoutId = setTimeout(() => {
+        const modalBody = document.querySelector('.modal-body');
+        if (modalBody) {
+          const codeBlocks = modalBody.querySelectorAll('pre code');
+          codeBlocks.forEach((block) => {
+            hljs.highlightElement(block as HTMLElement);
+          });
+        }
+      }, 0);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [modalPreview]);
   
