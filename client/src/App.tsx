@@ -33,12 +33,12 @@ function App() {
       .catch(error => console.error('Error fetching content:', error));
 
     // Listen for new content
-    socket.on('contentAdded', (newContent) => {
-      setContent(prevContent => [newContent, ...prevContent]);
+    socket.on('contentAdded', (newContent: ContentItem) => {
+      setContent((prevContent: ContentItem[]) => [newContent, ...prevContent]);
     });
     // Listen for deleted content
-    socket.on('contentDeleted', (deletedContent) => {
-      setContent(prevContent => prevContent.filter(item => item.id !== deletedContent.id));
+    socket.on('contentDeleted', (deletedContent: { id: number }) => {
+      setContent((prevContent: ContentItem[]) => prevContent.filter((item: ContentItem) => item.id !== deletedContent.id));
     });
     // Listen for all content deleted
     socket.on('allContentDeleted', () => {

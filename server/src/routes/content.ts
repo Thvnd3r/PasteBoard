@@ -63,37 +63,27 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
   });
   
  // Upload file
-  router.post('/file', upload.single('file'), async (req: Request, res: Response) => {
+  router.post('/file', upload.array('file'), async (req: Request, res: Response) => {
     try {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+      const files = req.files as Express.Multer.File[];
+      if (!files || files.length === 0) {
+        return res.status(400).json({ error: 'No files uploaded' });
       }
-      
-      const filename = req.file.filename;
-      const originalName = req.file.originalname;
-      
-      // Determine if the file is an image based on MIME type
-      const isImage = req.file.mimetype && req.file.mimetype.startsWith('image/');
-      // Set type and tag accordingly
-      const type = isImage ? 'image' : 'file';
-      const tag = isImage ? 'Image' : 'File';
-
-      const record = await addContent(type, originalName, filename, tag);
-      const { id, timestamp } = record;
-
-      // Emit to all connected clients with the actual database timestamp
-      io.emit('contentAdded', { 
-        id, 
-        type,
-        content: originalName, 
-        filename,
-        tag,
-        timestamp
-      });
-
-      res.json({ id, type, content: originalName, filename, tag });
+      const results = [];
+      for (const file of files) {
+        const filename = file.filename;
+        const originalName = file.originalname;
+        const isImage = file.mimetype && file.mimetype.startsWith('image/');
+        const type = isImage ? 'image' : 'file';
+        const tag = isImage ? 'Image' : 'File';
+        const record = await addContent(type, originalName, filename, tag);
+        const { id, timestamp } = record;
+        io.emit('contentAdded', { id, type, content: originalName, filename, tag, timestamp });
+        results.push({ id, type, content: originalName, filename, tag });
+      }
+      res.json(results);
     } catch (error) {
-      res.status(500).json({ error: 'Failed to upload file' });
+      res.status(500).json({ error: 'Failed to upload files' });
     }
   });
   

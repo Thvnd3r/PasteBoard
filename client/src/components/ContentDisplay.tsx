@@ -211,16 +211,34 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
           )}
         </>
       );
-    } else if (item.type === 'file') {
+    } else if (item.type === 'file' || item.type === 'image') {
       const fileUrl = `/uploads/${item.filename}`;
+      const isImage = item.type === 'image';
       return (
         <div className="file-display">
-          <span>File: {item.content}</span>
-          <button 
-            className="view-file-button"
-            onClick={() => setModalContent({url: fileUrl, filename: item.filename || item.content, type: item.tag || 'File'})}
+          <span>{isImage ? 'Image' : 'File'}: {item.content}</span>
+          {isImage && (
+            <button 
+              className="view-file-button"
+              onClick={() => setModalContent({url: fileUrl, filename: item.filename || item.content, type: item.tag || 'Image'})}
+            >
+              View Image
+            </button>
+          )}
+          <button
+            className="download-button"
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = fileUrl;
+              link.download = item.filename || item.content;
+              link.style.display = 'none';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            aria-label="Download file"
           >
-            View File
+            Download
           </button>
         </div>
       );
