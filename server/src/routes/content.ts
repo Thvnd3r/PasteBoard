@@ -74,23 +74,24 @@ export const contentRoutes = (io: any, detectContentType: (content: string) => '
       
       // Determine if the file is an image based on MIME type
       const isImage = req.file.mimetype && req.file.mimetype.startsWith('image/');
-      // Add appropriate tag for file uploads
+      // Set type and tag accordingly
+      const type = isImage ? 'image' : 'file';
       const tag = isImage ? 'Image' : 'File';
-      
-      const record = await addContent('file', originalName, filename, tag);
+
+      const record = await addContent(type, originalName, filename, tag);
       const { id, timestamp } = record;
-      
+
       // Emit to all connected clients with the actual database timestamp
       io.emit('contentAdded', { 
         id, 
-        type: 'file', 
+        type,
         content: originalName, 
         filename,
         tag,
         timestamp
       });
-      
-      res.json({ id, type: 'file', content: originalName, filename, tag });
+
+      res.json({ id, type, content: originalName, filename, tag });
     } catch (error) {
       res.status(500).json({ error: 'Failed to upload file' });
     }
