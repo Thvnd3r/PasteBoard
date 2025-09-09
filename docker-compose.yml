@@ -2,7 +2,7 @@ services:
   pasteboard:
     image: dillonreese/pasteboard:latest
     ports:
-      - "3000:3001"
+      - "3000:3001" # (Optional) Change the left side, to use a different port on your host machine.
     volumes:
       - ./uploads:/app/uploads
       - ./server/pasteboard.db:/app/pasteboard.db
