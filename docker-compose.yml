@@ -1,6 +1,6 @@
 services:
   pasteboard:
-    build: .
+    image: dillonreese/pasteboard:latest
     ports:
       - "3000:3001"
     volumes:
