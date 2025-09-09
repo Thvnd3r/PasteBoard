@@ -1,4 +1,3 @@
-
 import { test, expect } from '@playwright/test';
 import path from 'path';
 
@@ -23,12 +22,10 @@ test.describe('PasteBoard UI', () => {
 
   test('Filter Text/Links and Files', async ({ page }) => {
     await page.click('button:has-text("Text/Links")');
-    const textLinkCodeCount = await page.locator('.content-item.text, .content-item.link, .content-item.code').count();
-    expect(textLinkCodeCount).toBeGreaterThan(0);
+  await expect(page.locator('.content-item.text, .content-item.link, .content-item.code')).toHaveCount(1);
 
     await page.click('button:has-text("Files")');
-    const fileImageCount = await page.locator('.content-item.file, .content-item.image').count();
-    expect(fileImageCount).toBeGreaterThan(0);
+  await expect(page.locator('.content-item.file, .content-item.image')).toHaveCount(1);
   });
 
   test('Copy Text/Link item', async ({ page }) => {

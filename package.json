@@ -11,6 +11,7 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.3",
     "@types/highlight.js": "^9.12.4",
