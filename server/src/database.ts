@@ -40,6 +40,13 @@ export const getAllContent = async () => {
   return stmt.all();
 };
 
+// Get content by type
+export const getContentByType = async (type: string) => {
+  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const stmt = db.prepare('SELECT * FROM content WHERE type = ? ORDER BY timestamp DESC');
+  return stmt.all(type);
+};
+
 interface ContentRecord {
   id: number;
   type: string;

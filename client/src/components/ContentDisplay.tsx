@@ -65,18 +65,25 @@ const generateTitle = (item: ContentItem): string => {
   }
 };
 
+
 interface ContentDisplayProps {
   content: ContentItem[];
   onDeleteItem?: (id: number) => void;
   onDeleteAll?: () => void;
   showDeleteAll?: boolean;
+  filterType?: string;
+  onFilterTypeChange?: (type: string) => void;
+  availableTypes?: string[];
 }
 
 const ContentDisplay: React.FC<ContentDisplayProps> = ({ 
   content, 
   onDeleteItem,
   onDeleteAll,
-  showDeleteAll = true
+  showDeleteAll = true,
+  filterType = 'all',
+  onFilterTypeChange,
+  availableTypes = ['all', 'text', 'link', 'code', 'file']
 }) => {
   const [showConfirmDeleteAll, setShowConfirmDeleteAll] = useState(false);
   const [showConfirmDeleteItem, setShowConfirmDeleteItem] = useState<number | null>(null);
@@ -281,8 +288,19 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   
   return (
     <div className="content-display">
-      <div className="content-header">
-        <h2>Recent Content</h2>
+      <div className="content-controls" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <div className="filter-container">
+          <label htmlFor="content-type-filter">Filter by type: </label>
+          <select
+            id="content-type-filter"
+            value={filterType}
+            onChange={e => onFilterTypeChange && onFilterTypeChange(e.target.value)}
+          >
+            {availableTypes.map(type => (
+              <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+            ))}
+          </select>
+        </div>
         {showDeleteAll && (
           <div className="delete-all-container">
             {showConfirmDeleteAll ? (

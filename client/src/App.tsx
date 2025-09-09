@@ -20,36 +20,37 @@ const socket = io();
 function App() {
   const [content, setContent] = useState<ContentItem[]>([]);
   const [activeView, setActiveView] = useState('new'); // new, text, files, view-all
-  
+  const [filterType, setFilterType] = useState<string>('all');
+  const [availableTypes] = useState<string[]>(['all', 'text', 'link', 'code', 'file']);
+
+  // Fetch content based on active view and filter
   useEffect(() => {
-    // Fetch initial content
-    fetch('/api/content')
+    let url = '/api/content';
+    // Always fetch all, filter client-side for multi-type tabs
+    fetch(url)
       .then(response => response.json())
       .then(data => setContent(data))
       .catch(error => console.error('Error fetching content:', error));
-    
-      // Listen for new content
-      socket.on('contentAdded', (newContent) => {
-        setContent(prevContent => [newContent, ...prevContent]);
-      });
-    
+
+    // Listen for new content
+    socket.on('contentAdded', (newContent) => {
+      setContent(prevContent => [newContent, ...prevContent]);
+    });
     // Listen for deleted content
     socket.on('contentDeleted', (deletedContent) => {
       setContent(prevContent => prevContent.filter(item => item.id !== deletedContent.id));
     });
-    
     // Listen for all content deleted
     socket.on('allContentDeleted', () => {
       setContent([]);
     });
-    
     // Clean up socket connection
     return () => {
       socket.off('contentAdded');
       socket.off('contentDeleted');
       socket.off('allContentDeleted');
     };
-  }, []);
+  }, [activeView]);
   
   const deleteContentItem = async (id: number) => {
     try {
@@ -87,28 +88,48 @@ function App() {
   
   const renderActiveView = () => {
     switch (activeView) {
-      case 'text':
+      case 'text': {
+        // Only show text, code, and link types
+        const textTypes = ['text', 'link', 'code'];
+        const filtered = content.filter(item => textTypes.includes(item.type));
         return (
-          <ContentDisplay 
-            content={content.filter(item => item.type === 'text' || item.type === 'link' || item.type === 'code')} 
+          <ContentDisplay
+            content={filterType === 'all' ? filtered : filtered.filter(item => item.type === filterType)}
             onDeleteItem={deleteContentItem}
             onDeleteAll={deleteAllContent}
+            filterType={filterType}
+            onFilterTypeChange={setFilterType}
+            availableTypes={['all', 'text', 'link', 'code']}
           />
         );
-      case 'files':
+      }
+      case 'files': {
+        // Only show file and image types, and filter strictly by type
+        const fileTypes = ['file', 'image'];
+        let filtered = content.filter(item => fileTypes.includes(item.type));
+        if (filterType !== 'all') {
+          filtered = filtered.filter(item => item.type === filterType);
+        }
         return (
-          <ContentDisplay 
-            content={content.filter(item => item.type === 'file')} 
+          <ContentDisplay
+            content={filtered}
             onDeleteItem={deleteContentItem}
             onDeleteAll={deleteAllContent}
+            filterType={filterType}
+            onFilterTypeChange={setFilterType}
+            availableTypes={['all', 'file', 'image']}
           />
         );
+      }
       case 'view-all':
         return (
-          <ContentDisplay 
-            content={content} 
+          <ContentDisplay
+            content={content}
             onDeleteItem={deleteContentItem}
             onDeleteAll={deleteAllContent}
+            filterType={filterType}
+            onFilterTypeChange={setFilterType}
+            availableTypes={availableTypes}
           />
         );
       case 'new':

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
-import { getAllContent, addContent, deleteContent, deleteAllContent } from '../database';
+import { getAllContent, getContentByType, addContent, deleteContent, deleteAllContent } from '../database';
 import { detectLanguage } from '../contentParser';
 
 // Configure multer for file uploads
@@ -20,10 +20,16 @@ const upload = multer({ storage: storage });
 export const contentRoutes = (io: any, detectContentType: (content: string) => 'link' | 'code' | 'text') => {
   const router = Router();
   
-  // Get all content
+  // Get all content, or filter by type if query param is present
   router.get('/', async (req: Request, res: Response) => {
     try {
-      const content = await getAllContent();
+      const { type } = req.query;
+      let content;
+      if (type && typeof type === 'string') {
+        content = await getContentByType(type);
+      } else {
+        content = await getAllContent();
+      }
       res.json(content);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch content' });
