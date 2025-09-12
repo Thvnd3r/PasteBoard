@@ -1,10 +1,38 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 
 // Open database
 export const initDatabase = async (): Promise<Database.Database> => {
- const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
   
+  // Ensure the database file exists and is writable
+  try {
+    // Create the directory if it doesn't exist
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // Create empty database file if it doesn't exist
+    if (!fs.existsSync(dbPath)) {
+      fs.closeSync(fs.openSync(dbPath, 'w'));
+    }
+  } catch (error) {
+    console.warn('Warning: Could not create database file, using in-memory database:', error);
+    // Fallback to in-memory database if file creation fails
+    const db = new Database(':memory:');
+    initializeDatabaseSchema(db);
+    return db;
+  }
+  
+  const db = new Database(dbPath);
+  initializeDatabaseSchema(db);
+  return db;
+};
+
+// Separate function to initialize database schema
+const initializeDatabaseSchema = (db: Database.Database) => {
   // Create content table
   db.exec(`
     CREATE TABLE IF NOT EXISTS content (
@@ -29,20 +57,20 @@ export const initDatabase = async (): Promise<Database.Database> => {
   } catch (error) {
     // Column might already exist, which is fine
   }
-  
-  return db;
 };
 
 // Get all content
 export const getAllContent = async () => {
-  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const db = new Database(dbPath);
   const stmt = db.prepare('SELECT * FROM content ORDER BY timestamp DESC');
   return stmt.all();
 };
 
 // Get content by type
 export const getContentByType = async (type: string) => {
-  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const db = new Database(dbPath);
   const stmt = db.prepare('SELECT * FROM content WHERE type = ? ORDER BY timestamp DESC');
   return stmt.all(type);
 };
@@ -59,7 +87,8 @@ interface ContentRecord {
 
 // Add new content with tag and language
 export const addContent = async (type: string, content: string, filename?: string, tag?: string, language?: string): Promise<ContentRecord> => {
-  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const db = new Database(dbPath);
   const stmt = db.prepare('INSERT INTO content (type, content, filename, tag, language) VALUES (?, ?, ?, ?, ?)');
   const result = stmt.run(type, content, filename || null, tag || null, language || null);
   
@@ -70,7 +99,8 @@ export const addContent = async (type: string, content: string, filename?: strin
 
 // Delete content by ID
 export const deleteContent = async (id: number) => {
-  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const db = new Database(dbPath);
   const stmt = db.prepare('SELECT filename FROM content WHERE id = ?');
   const result: any = stmt.get(id);
   
@@ -78,8 +108,8 @@ export const deleteContent = async (id: number) => {
   if (result && result.filename) {
     const filePath = path.join(__dirname, '../uploads', result.filename);
     try {
-      if (require('fs').existsSync(filePath)) {
-        require('fs').unlinkSync(filePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
       }
     } catch (error) {
       console.error('Error deleting file:', error);
@@ -93,7 +123,8 @@ export const deleteContent = async (id: number) => {
 
 // Delete all content
 export const deleteAllContent = async () => {
-  const db = new Database(path.join(__dirname, '../pasteboard.db'));
+  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const db = new Database(dbPath);
   
   // Get all file items to delete their files from the filesystem
   const stmt = db.prepare('SELECT filename FROM content WHERE filename IS NOT NULL');
@@ -104,8 +135,8 @@ export const deleteAllContent = async () => {
     if (file.filename) {
       const filePath = path.join(__dirname, '../uploads', file.filename);
       try {
-        if (require('fs').existsSync(filePath)) {
-          require('fs').unlinkSync(filePath);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
         }
       } catch (error) {
         console.error('Error deleting file:', error);
