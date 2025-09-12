@@ -4,7 +4,7 @@ import fs from 'fs';
 
 // Open database
 export const initDatabase = async (): Promise<Database.Database> => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   
   // Ensure the database file exists and is writable
   try {
@@ -61,7 +61,7 @@ const initializeDatabaseSchema = (db: Database.Database) => {
 
 // Get all content
 export const getAllContent = async () => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   const db = new Database(dbPath);
   const stmt = db.prepare('SELECT * FROM content ORDER BY timestamp DESC');
   return stmt.all();
@@ -69,7 +69,7 @@ export const getAllContent = async () => {
 
 // Get content by type
 export const getContentByType = async (type: string) => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   const db = new Database(dbPath);
   const stmt = db.prepare('SELECT * FROM content WHERE type = ? ORDER BY timestamp DESC');
   return stmt.all(type);
@@ -87,7 +87,7 @@ interface ContentRecord {
 
 // Add new content with tag and language
 export const addContent = async (type: string, content: string, filename?: string, tag?: string, language?: string): Promise<ContentRecord> => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   const db = new Database(dbPath);
   const stmt = db.prepare('INSERT INTO content (type, content, filename, tag, language) VALUES (?, ?, ?, ?, ?)');
   const result = stmt.run(type, content, filename || null, tag || null, language || null);
@@ -99,7 +99,7 @@ export const addContent = async (type: string, content: string, filename?: strin
 
 // Delete content by ID
 export const deleteContent = async (id: number) => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   const db = new Database(dbPath);
   const stmt = db.prepare('SELECT filename FROM content WHERE id = ?');
   const result: any = stmt.get(id);
@@ -123,7 +123,7 @@ export const deleteContent = async (id: number) => {
 
 // Delete all content
 export const deleteAllContent = async () => {
-  const dbPath = path.join(__dirname, '../pasteboard.db');
+  const dbPath = path.join(__dirname, '../server/pasteboard.db');
   const db = new Database(dbPath);
   
   // Get all file items to delete their files from the filesystem

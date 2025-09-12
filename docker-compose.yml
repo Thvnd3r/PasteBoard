@@ -6,6 +6,6 @@ services:
       - "3000:3001"
     volumes:
       - ./uploads:/app/uploads
-      - ./server/pasteboard.db:/app/pasteboard.db
+      - ./server:/app/server
     environment:
       - NODE_ENV=production
