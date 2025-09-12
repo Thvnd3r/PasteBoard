@@ -326,6 +326,9 @@ button:disabled {
   position: relative;
   margin-bottom: 10px;
   background-color: #2a2d2f;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .entry-header {
@@ -333,6 +336,9 @@ button:disabled {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .entry-header-left {
@@ -354,6 +360,9 @@ button:disabled {
 
 .entry-content {
  margin-top: 10px;
+ max-width: 100%;
+ word-wrap: break-word;
+ overflow-wrap: break-word;
 }
 
 .tag {
@@ -403,6 +412,9 @@ button:disabled {
 
 .content-item a {
   color: #4da6ff !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 /* File display styling */
@@ -410,6 +422,9 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .view-file-button {
