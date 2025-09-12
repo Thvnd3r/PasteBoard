@@ -2,6 +2,8 @@
 
 A simple, real-time collaborative paste board application running in a Docker container. This application is useful for sharing information between devices on your local network.
 
+> **Note**: Built and deployed via GitHub Actions to GitHub Container Registry.
+
 ## Features
 
 - Real-time updates using Socket.IO
