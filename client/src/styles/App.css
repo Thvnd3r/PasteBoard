@@ -6,6 +6,7 @@ body {
   margin: 0;
   padding: 0;
   font-size: 16px;
+  overflow-x: hidden; /* Prevent horizontal scrollbar on body */
 }
 
 .App {
@@ -162,7 +163,8 @@ body {
   padding-bottom: 5px;
   font-size: 1.5em;
   text-align: center;
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
 }
 
 .content-input-simple, .file-upload-simple {
@@ -173,7 +175,8 @@ body {
 }
 
 .content-input-simple textarea, .file-upload-simple textarea {
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
   background-color: #181a1b;
   color: #e0d6c5;
   border: 1px solid #a89f91;
@@ -183,6 +186,8 @@ body {
   box-sizing: border-box;
   font-size: 1em;
   margin-bottom: 10px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .content-input-simple textarea:focus, .file-upload-simple textarea:focus {
@@ -272,7 +277,8 @@ button:disabled {
   margin: 20px auto;
   transition: all 0.3s ease;
   position: relative;
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
 }
 
 .drop-zone-simple.drag-over {
@@ -339,6 +345,7 @@ button:disabled {
   flex-wrap: wrap;
   width: 100%;
   box-sizing: border-box;
+  min-width: 0; /* Allow flex items to shrink below their content size */
 }
 
 .entry-header-left {
@@ -346,16 +353,25 @@ button:disabled {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  min-width: 0; /* Allow flex items to shrink */
+  flex: 1;
 }
 
 .entry-header-right {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
+  min-width: 0; /* Allow flex items to shrink */
 }
 
 .entry-title {
   font-weight: bold;
   color: #e0d6c5;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+ flex: 1;
 }
 
 .entry-content {
@@ -563,6 +579,7 @@ button:disabled {
   /* Limit to 10 lines by default */
   display: -webkit-box;
   -webkit-line-clamp: 10;
+  line-clamp: 10;
   -webkit-box-orient: vertical;
   overflow: hidden;
   position: relative;
@@ -570,6 +587,7 @@ button:disabled {
 
 .content-item .text-content.expanded {
   -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 .code-content {
@@ -577,11 +595,21 @@ button:disabled {
   border-radius: 5px;
   padding: 15px;
   overflow: auto;
- margin: 10px 0;
+  margin: 10px 0;
   border: 1px solid #333;
   /* Limit to 10 lines by default */
   max-height: 250px; /* Approximate height for 10 lines */
   position: relative;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.code-content pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .code-content.expanded {
@@ -799,5 +827,42 @@ button:disabled {
   
   .App-header .tagline {
     font-size: 0.8em;
+  }
+}
+
+/* Very small screen adjustments */
+@media (max-width: 480px) {
+  .entry-header-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .entry-header-right {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 5px;
+  }
+  
+  .confirm-delete-item {
+    position: static;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 5px;
+  }
+  
+  .content-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .delete-all-container {
+    align-self: flex-end;
   }
 }

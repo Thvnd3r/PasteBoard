@@ -21,7 +21,7 @@ A simple, real-time collaborative paste board application running in a Docker co
 
 #### Option 1: Use Prebuilt Docker Hub Image
 
-1. Make sure your `docker-compose.yml` uses the image `dillonreese/pasteboard:latest` (already set by default).
+1. Make sure your `docker-compose.yml` uses the image `ghcr.io/thvnd3r/pasteboard:latest` (already set by default).
 
 or 
 
@@ -30,7 +30,7 @@ or
    ```Docker Compose
       services:
      pasteboard:
-       image: dillonreese/pasteboard:latest
+       image: ghcr.io/thvnd3r/pasteboard:latest
        ports:
          - "3000:3001" # (Optional) Change the left side, to use a different port on your host machine.
        volumes:

@@ -49,7 +49,7 @@ COPY --from=client-builder /app/build /client/build
 RUN mkdir -p uploads
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3001
 
 # Start the application
 CMD ["node", "dist/index.js"]

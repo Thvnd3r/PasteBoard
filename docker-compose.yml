@@ -1,6 +1,6 @@
 services:
   pasteboard:
-    image: dillonreese/pasteboard:latest
+    image: ghcr.io/thvnd3r/pasteboard:latest
     # (Optional) Change the left side to use a different port on your host machine.
     ports:
       - "3000:3001"

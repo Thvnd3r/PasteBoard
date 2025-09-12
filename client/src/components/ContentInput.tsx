@@ -41,8 +41,7 @@ const ContentInput: React.FC<ContentInputProps> = ({ socket }) => {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         placeholder="Paste your text or URL here..."
-        rows={2}
-        cols={25}
+        rows={4}
       />
       <br />
       <button onClick={handleSubmit}>Paste</button>
